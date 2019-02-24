@@ -1,0 +1,9 @@
+// Hero
+
+.hero {
+    &.has-bg-image {
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position-y: center;
+    }
+}

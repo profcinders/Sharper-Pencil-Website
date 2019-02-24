@@ -1,0 +1,35 @@
+// Pagination
+
+.pagination-link {
+    &:focus {
+        color: $pagination-focus-color;
+    }
+
+    &:active {
+        color: $pagination-active-color;
+        border-color: $pagination-active-border-color;
+    }
+}
+
+// Buttons
+
+.button {
+    @each $name, $pair in $colors {
+        $color: nth($pair, 1);
+        $color-invert: nth($pair, 2);
+
+        &.is-#{$name} {
+            &.is-inverted.is-loading {
+                &::after {
+                    border-color: transparent transparent $color $color !important
+                }
+
+                &.is-outlined {
+                    &::after {
+                        border-color: transparent transparent $color-invert $color-invert !important
+                    }
+                }
+            }
+        }
+    }
+}

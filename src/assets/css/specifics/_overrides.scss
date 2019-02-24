@@ -1,0 +1,132 @@
+// Navbar
+
+.navbar-item {
+    span {
+        margin-left: 0.5rem;
+    }
+}
+
+// Footer
+
+.footer {
+    padding-bottom: 3rem;
+}
+
+// Sticky Footer
+
+body.sticky-footer {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.navbar, .footer {
+    flex: none;
+}
+
+.main-content {
+    flex: 1 0 auto;
+}
+
+// Form
+
+//FROM: bulmaswatch/materia
+.input {
+    border: none;
+    padding-left: 0;
+    padding-right: 0;
+    box-shadow: inset 0 -1px 0 $grey-lighter;
+    transition: all 300ms;
+
+    &.is-small {
+        border-radius: 0;
+    }
+
+    &.is-active,
+    &.is-focused,
+    &:active,
+    &:focus {
+        box-shadow: inset 0 -2px 0 $input-focus-border-color;
+    }
+
+    @each $name, $pair in $colors {
+        $color: nth($pair, 1);
+
+        &.is-#{$name} {
+            box-shadow: inset 0 -1px 0 $color;
+
+            &.is-active,
+            &.is-focused,
+            &:active,
+            &:focus {
+                box-shadow: inset 0 -2px 0 $color;
+            }
+        }
+    }
+
+    &.is-disabled,
+    &[disabled],
+    &[readonly] {
+        border-bottom: 1px dotted $grey-lighter;
+        cursor: not-allowed;
+    }
+}
+
+.textarea {
+    box-shadow: none;
+}
+
+.select select {
+    border: none;
+    border-radius: 0;
+    box-shadow: inset 0 -1px 0 $grey-lighter;
+    transition: all 300ms;
+
+    &.is-active,
+    &.is-focused,
+    &:active,
+    &:focus {
+        box-shadow: inset 0 -2px 0 $input-focus-border-color;
+    }
+}
+
+.control {
+    &.has-addons {
+        .button,
+        .input,
+        .select {
+            &:first-child,
+            &:last-child {
+                border-radius: 0;
+
+                select {
+                    border-radius: 0;
+                }
+            }
+        }
+
+        .button {
+            box-shadow: none;
+        }
+    }
+}
+//END: bulmaswatch/materia
+
+.navbar .input {
+    color: $white;
+    background-color: transparent;
+
+    &::placeholder {
+        color: $white;
+        opacity: 0.5;
+    }
+}
+
+// Menu
+
+.menu {
+    &.has-no-labels {
+        padding: unset;
+        background-color: transparent;
+    }
+}
