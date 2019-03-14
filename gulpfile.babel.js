@@ -5,6 +5,7 @@ import sass from "gulp-sass";
 import autoprefixer from "gulp-autoprefixer";
 import uglify from "gulp-uglify-es";
 import * as log from "./scripts/Gulp/log";
+import purgecss from "gulp-purgecss";
 
 sass.compiler = require("node-sass");
 
@@ -19,14 +20,17 @@ var jsFiles = [scriptsFolder + "/**/*.js", "!" + scriptsFolder + "/min{,/**}"];
 gulp.task("Setup-Local-IIS", done =>
     run(`./scripts/Powershell/site-setup.ps1 -projectName '${siteName}' -sitePath '${file.absPath(siteRoot)}'`, done));
 
-gulp.task("Process-Sass", () => gulp.src(sassFiles)
-                                    .pipe(sass({ includePaths: [stylesFolder, "./node_modules"], outputStyle: 'compressed' }).on("error", sass.logError))
-                                    .pipe(autoprefixer())
-                                    .pipe(gulp.dest(stylesFolder)));
+gulp.task("Process-Sass", () =>
+    gulp.src(sassFiles)
+        .pipe(sass({ includePaths: [stylesFolder, "./node_modules"], outputStyle: 'compressed' }).on("error", sass.logError))
+        .pipe(autoprefixer())
+        .pipe(purgecss({ content: ["src/**/*.html", "src/**/*.cshtml"] }))
+        .pipe(gulp.dest(stylesFolder)));
 
-gulp.task("Process-JS", () => gulp.src(jsFiles)
-                                  .pipe(uglify().on("error", (e) => { log.error(e); }))
-                                  .pipe(gulp.dest(scriptsFolder + "\\min")));
+gulp.task("Process-JS", () =>
+    gulp.src(jsFiles)
+        .pipe(uglify().on("error", (e) => { log.error(e); }))
+        .pipe(gulp.dest(scriptsFolder + "\\min")));
 
 // Watchers
 gulp.task("Watch-Sass", () => gulp.watch(sassFiles, { verbose: true }, gulp.series("Process-Sass")));
