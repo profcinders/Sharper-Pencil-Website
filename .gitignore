@@ -353,5 +353,6 @@ ASALocalRun/
 **/App_Data/Models/ood.flag
 
 # Sharper Pencil ignores
-**/assets/css/**/*.css
-**/assets/js/min/**/*.js
+**/assets/
+!**/assets/images/
+!**/assets/src/

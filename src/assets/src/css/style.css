@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.hoverable {
+    position: relative;
+}
+
+.hoverable .hover-activated {
+    display: none;
+    top: 100%;
+    left: 0;
+}
+
+.hoverable:hover .hover-activated {
+    display: block;
+}
