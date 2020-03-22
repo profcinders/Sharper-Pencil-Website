@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Loaded Dice Prototype | Sharper Pencil</title>
+
+    <link href="/assets/css/style.css" rel="stylesheet">
+</head>
+
+<body>
+    <nav class="bg-purple-600 px-6 text-white" role="navigation" aria-label="main navigation">
+        <div class="flex items-stretch container mx-auto">
+            <div class="flex items-stretch hover:text-purple-200">
+                <a href="/" class="flex items-center text-2xl pr-6 py-2">Sharper Pencil</a>
+            </div>
+            <div class="hoverable flex items-stretch px-3 py-2 hover:text-purple-200 cursor-pointer">
+                <div class="flex items-center">Prototypes</div>
+                <div
+                    class="hover-activated absolute bg-white text-purple-900 border border-purple-300 shadow-md whitespace-no-wrap">
+                    <a href="/prototype/loaded-dice.html"
+                        class="flex items-center pl-4 pr-5 py-2 hover:bg-purple-200">Loaded Dice</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <svg class="w-full h-10 text-purple-600 z-10 -mt-6">
+        <use xlink:href="/assets/images/navbar-underline.min.svg#SharperNavUnderline"></use>
+    </svg>
+
+    <main role="main" class="px-6 py-12">
+        <section class="container mx-auto">
+            <h1 class="text-5xl font-semibold">Loaded Dice - Prototype</h1>
+
+            <hr class="my-6" />
+
+            <p class="my-4">
+                This is an experiment to see how randomised dice can be loaded to favour particular rolls.
+                This was inspired by a particularly bad run of luck in a tabletop RPG game.
+                Feel free to message me with your experience using this tool!
+            </p>
+
+            <hr class="my-6" />
+        </section>
+        <section class="container mx-auto">
+            <form>
+                <div class="flex items-baseline justify-center mb-5">
+                    <input class="border border-gray-400 hover:border-gray-500 focus:border-gray-500 rounded shadow-inner w-16 pl-3 pr-1 py-1 mr-3" type="number" step="1" min="1" placeholder="X">
+                    <div class="border border-r-0 border-gray-400 rounded-l px-3 py-1">d</div>
+                    <input class="border border-gray-400 hover:border-gray-500 focus:border-gray-500 rounded-r shadow-inner w-16 pl-3 pr-1 py-1 mr-3" type="number" step="1" min="2" placeholder="N">
+                    <div class="relative">
+                        <select class="appearance-none border border-r-0 border-gray-400 hover:border-gray-500 focus:border-gray-500 rounded-l py-1 pl-2 pr-8 w-full">
+                            <option value="+">+</option>
+                            <option value="-">-</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-purple-600">
+                            <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"></path></svg>
+                        </div>
+                    </div>
+                    <input class="border border-gray-400 hover:border-gray-500 focus:border-gray-500 rounded-r shadow-inner w-16 pl-3 pr-1 py-1" type="number" step="1" min="0" placeholder="c">
+                </div>
+                <div class="flex justify-center">
+                    <button class="px-5 py-1 rounded-full bg-purple-600 text-white" type="submit">Roll</button>
+                </div>
+            </form>
+        </section>
+    </main>
+</body>
+
+</html>
