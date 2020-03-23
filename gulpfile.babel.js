@@ -18,7 +18,7 @@ var destStylesFolder = assetsRoot + "/css";
 var destScriptsFolder = assetsRoot + "/js";
 var srcStyles = assetsRoot + "/src/css/style.css";
 var srcScripts = assetsRoot + "/src/js/**/*.js";
-var htmlFiles = [siteRoot + "/**/*.html", siteRoot + "/**/*.cshtml"];
+var cssOutputFiles = [siteRoot + "/**/*.html", siteRoot + "/**/*.cshtml", srcScripts];
 
 // Tasks
 gulp.task("Setup-Local-IIS", done =>
@@ -28,7 +28,7 @@ gulp.task("Process-CSS", () => gulp
     .src(srcStyles)
     .pipe(postCss([tailwind, postCssPreset]))
     .pipe(gulp.dest(destStylesFolder))
-    .pipe(postCss([purgeCss({ content: htmlFiles }), cssNano]))
+    .pipe(postCss([purgeCss({ content: cssOutputFiles }), cssNano]))
     .pipe(gulp.dest(destStylesFolder + "/min")));
 
 gulp.task("Process-JS", () => gulp
@@ -43,7 +43,7 @@ gulp.task("Library-JS", () => gulp
     .pipe(gulp.dest(destScriptsFolder + "/lib")));
 
 // Watchers
-gulp.task("Watch-CSS", () => gulp.watch([srcStyles].concat(htmlFiles), { verbose: true }, gulp.series("Process-CSS")));
+gulp.task("Watch-CSS", () => gulp.watch([srcStyles].concat(cssOutputFiles), { verbose: true }, gulp.series("Process-CSS")));
 
 gulp.task("Watch-JS", () => gulp.watch(srcScripts, { verbose: true }, gulp.series("Process-JS")));
 

@@ -77,8 +77,13 @@
                 <button class="px-5 py-1 rounded-full bg-purple-600 text-white" v-on:click="rollDice">Roll</button>
             </div>
             <p class="text-center" v-if="!hasRolled">Roll the dice!</p>
-            <p class="text-center" v-else>You rolled: <span
-                    class="text-2xl font-semibold text-purple-600">{{ rollResult }}</span></p>
+            <div v-else>
+                <p class="text-center">
+                    You rolled:
+                    <span class="text-2xl font-semibold text-purple-600">{{ rollResult }}</span>
+                </p>
+                <p class="text-center" v-html="rollDetails"></p>
+            </div>
         </section>
     </main>
 
