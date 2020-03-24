@@ -39,7 +39,7 @@ gulp.task("Process-JS", () => gulp
     .pipe(gulp.dest(destScriptsFolder + "/min")));
 
 gulp.task("Library-JS", () => gulp
-    .src(["node_modules/vue/dist/vue.min.js"])
+    .src(["node_modules/vue/dist/vue.min.js", "node_modules/chart.js/dist/Chart.min.js"])
     .pipe(gulp.dest(destScriptsFolder + "/lib")));
 
 // Watchers

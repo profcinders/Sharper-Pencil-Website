@@ -1,5 +1,44 @@
 let diceApp = new Vue({
     el: "#diceApp",
+    mounted() {
+        let chartEl = document.getElementById('oddsChart');
+        this.options.oddsChart = new Chart(chartEl, {
+            type: "bar",
+            data: {
+                datasets: [{
+                    backgroundColor: "#805ad5",
+                    barPercentage: 1,
+                    categoryPercentage: 1,
+                    data: Array(6).fill((1 / 6) * 100)
+                }],
+                labels: ["1", "2", "3", "4", "5", "6"]
+            },
+            options: {
+                legend: {
+                    display: false
+                },
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true,
+                            callback: function (value) {
+                                return Math.round((value + Number.EPSILON) * 100) / 100 + '%';
+                            },
+                        }
+                    }]
+                },
+                tooltips: {
+                    callbacks: {
+                        label(tooltipItem, data) {
+                            let label = data.datasets[tooltipItem.datasetIndex].label || "";
+                            label += (label ? ": " : "") + (Math.round((tooltipItem.yLabel + Number.EPSILON) * 100) / 100) + "%";
+                            return label;
+                        }
+                    }
+                }
+            }
+        });
+    },
     data: {
         dice: {
             diceMultiplier: 1,
@@ -16,12 +55,16 @@ let diceApp = new Vue({
         },
         options: {
             toggleCaret: "&#x2bc6;",
-            show: false
+            show: false,
+            oddsChart: null
         }
     },
     computed: {
         activeRollWeights() {
             return this.dice.rollWeights.slice(0, this.dice.dieSides);
+        },
+        totalWeight() {
+            return this.sumArray(this.activeRollWeights);
         }
     },
     watch: {
@@ -30,6 +73,12 @@ let diceApp = new Vue({
         },
         "dice.additiveSign": function () {
             this.calculateAdditive();
+        },
+        "dice.weighted": function () {
+            this.updateOddsChart();
+        },
+        "activeRollWeights": function () {
+            this.updateOddsChart();
         }
     },
     methods: {
@@ -67,7 +116,7 @@ let diceApp = new Vue({
             this.setRollResults(rolls, true);
         },
         setRollResults(rolls, weighted) {
-            this.dice.rollResult = rolls.reduce((x, y) => x + y, 0) + this.dice.additive;
+            this.dice.rollResult = this.sumArray(rolls) + this.dice.additive;
 
             rolls = rolls.map(r =>
                 r == 1 ? `<span class="font-bold text-red-600">${r}</span>`
@@ -89,8 +138,35 @@ let diceApp = new Vue({
                 this.options.toggleCaret = "&#x2bc6;";
             }
         },
+        updateOddsChart() {
+            let newData = [];
+            let newLabels = Array.from({ length: this.dice.dieSides }, (v, i) => i + 1);
+
+            if (this.dice.weighted) {
+                const divisor = this.totalWeight;
+                for (let w of this.activeRollWeights) {
+                    newData.push((w / divisor) * 100);
+                }
+            } else {
+                for (let i = 0; i < newLabels.length; i++) {
+                    newData.push((1 / newLabels.length) * 100);
+                }
+            }
+
+            this.options.oddsChart.data.labels = newLabels;
+            this.options.oddsChart.data.datasets.forEach((dataset) => {
+                dataset.data = newData;
+            });
+            this.options.oddsChart.update();
+        },
+        resetWeights() {
+            this.dice.rollWeights = Array(100).fill(1);
+        },
         getRandomInt(min, max) {
             return Math.floor(Math.random() * (max - min + 1)) + min;
+        },
+        sumArray(arr) {
+            return arr.reduce((x, y) => parseInt(x) + parseInt(y), 0);
         }
     }
 });
