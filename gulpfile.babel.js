@@ -26,9 +26,11 @@ gulp.task("Setup-Local-IIS", done =>
 
 gulp.task("Process-CSS", () => gulp
     .src(srcStyles)
-    .pipe(postCss([tailwind, postCssPreset]))
+    .pipe(postCss([tailwind,
+                   postCssPreset]))
     .pipe(gulp.dest(destStylesFolder))
-    .pipe(postCss([purgeCss({ content: cssOutputFiles }), cssNano]))
+    .pipe(postCss([purgeCss({ content: cssOutputFiles, defaultExtractor: content => content.match(/[\w-/:]+(?<!:)/g) || [] }),
+                   cssNano]))
     .pipe(gulp.dest(destStylesFolder + "/min")));
 
 gulp.task("Process-JS", () => gulp
