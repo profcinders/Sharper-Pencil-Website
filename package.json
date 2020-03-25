@@ -3,20 +3,24 @@
   "author": "Sharper Pencil",
   "version": "1.0.0",
   "description": "The main Sharper Pencil website's Gulp Tasks",
-  "main": "gulpfile.js",
+  "main": "gulpfile.babel.js",
   "private": true,
   "devDependencies": {
-    "babel-core": "^6.26.3",
-    "babel-preset-env": "^1.7.0",
+    "@babel/core": "^7.9.0",
+    "@babel/preset-env": "^7.8.7",
+    "@babel/register": "^7.9.0",
+    "@fullhuman/postcss-purgecss": "^2.1.0",
     "chalk": "^2.4.2",
+    "chart.js": "^2.9.3",
     "cssnano": "^4.1.10",
     "gulp": "^4.0.0",
+    "gulp-babel": "^8.0.0",
     "gulp-postcss": "^8.0.0",
     "gulp-uglify-es": "^2.0.0",
     "postcss-preset-env": "^6.7.0",
     "powershell": "^2.3.1",
     "strip-ansi": "^5.0.0",
     "tailwindcss": "^1.2.0",
-    "uncss": "^0.17.3"
+    "vue": "^2.6.11"
   }
 }
