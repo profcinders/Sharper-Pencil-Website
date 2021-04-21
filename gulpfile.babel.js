@@ -1,6 +1,5 @@
 import gulp from "gulp";
-import { run } from "./scripts/Gulp/powershell";
-import file from "./scripts/Gulp/files";
+import del from "del";
 import babel from "gulp-babel";
 import uglify from "gulp-uglify-es";
 import * as log from "./scripts/Gulp/log";
@@ -9,51 +8,76 @@ import postCssPreset from "postcss-preset-env";
 import purgeCss from "@fullhuman/postcss-purgecss";
 import tailwind from "tailwindcss";
 import cssNano from "cssnano";
+import browserSync from "browser-sync";
 
-var siteName = "sharper-pencil";
-var siteRoot = "./src";
+const server = browserSync.create();
 
-var assetsRoot = siteRoot + "/assets";
-var destStylesFolder = assetsRoot + "/css";
-var destScriptsFolder = assetsRoot + "/js";
-var srcStyles = assetsRoot + "/src/css/style.css";
-var srcScripts = assetsRoot + "/src/js/**/*.js";
-var cssOutputFiles = [siteRoot + "/**/*.html", siteRoot + "/**/*.cshtml", srcScripts];
+// Files
+const siteRoot = "./src";
+const distRoot = "./dist";
+
+const assetsRoot = "/assets";
+const destStylesFolder = distRoot + assetsRoot + "/css";
+const destScriptsFolder = distRoot + assetsRoot + "/js";
+const srcFiles = [siteRoot + "/**/*.html", siteRoot + assetsRoot + "/images/**/*.*"];
+const srcStyles = siteRoot + assetsRoot + "/src/css/style.css";
+const srcScripts = siteRoot + assetsRoot + "/src/js/**/*.js";
+const cssOutputFiles = [siteRoot + "/**/*.html", srcScripts];
 
 // Tasks
-gulp.task("Setup-Local-IIS", done =>
-    run(`./scripts/Powershell/site-setup.ps1 -projectName '${siteName}' -sitePath '${file.absPath(siteRoot)}'`, done));
+const clean = done =>
+    del([distRoot], done);
 
-gulp.task("Process-CSS", () => gulp
+const copyFiles = () => gulp
+    .src(srcFiles, { base: siteRoot })
+    .pipe(gulp.dest(distRoot));
+
+const processCss = () => gulp
     .src(srcStyles)
     .pipe(postCss([tailwind,
-                   postCssPreset]))
+        postCssPreset]))
     .pipe(gulp.dest(destStylesFolder))
     .pipe(postCss([purgeCss({ content: cssOutputFiles, defaultExtractor: content => content.match(/[\w-/:]+(?<!:)/g) || [] }),
-                   cssNano]))
-    .pipe(gulp.dest(destStylesFolder + "/min")));
+        cssNano]))
+    .pipe(gulp.dest(destStylesFolder + "/min"));
 
-gulp.task("Process-JS", () => gulp
+const processJs = () => gulp
     .src(srcScripts)
     .pipe(babel({ presets: ["@babel/preset-env"] }))
     .pipe(gulp.dest(destScriptsFolder))
     .pipe(uglify().on("error", e => { log.error(e); }))
-    .pipe(gulp.dest(destScriptsFolder + "/min")));
+    .pipe(gulp.dest(destScriptsFolder + "/min"));
 
-gulp.task("Library-JS", () => gulp
+const copyLib = () => gulp
     .src(["node_modules/vue/dist/vue.min.js", "node_modules/chart.js/dist/Chart.min.js"])
-    .pipe(gulp.dest(destScriptsFolder + "/lib")));
+    .pipe(gulp.dest(destScriptsFolder + "/lib"));
+
+const serveSite = done => {
+    server.init({
+        server: {
+            baseDir: distRoot
+        }
+    });
+    done();
+};
+
+const reloadServer = done => {
+    server.reload();
+    done();
+};
 
 // Watchers
-gulp.task("Watch-CSS", () => gulp.watch([srcStyles].concat(cssOutputFiles), { verbose: true }, gulp.series("Process-CSS")));
-
-gulp.task("Watch-JS", () => gulp.watch(srcScripts, { verbose: true }, gulp.series("Process-JS")));
+const watchSrc = () => gulp.watch(srcFiles, { verbose: true }, gulp.series(copyFiles, reloadServer));
+const watchCss = () => gulp.watch([srcStyles].concat(cssOutputFiles), { verbose: true }, gulp.series(processCss, reloadServer));
+const watchJs = () => gulp.watch(srcScripts, { verbose: true }, gulp.series(processJs, reloadServer));
 
 // Sequences
-gulp.task("frontend", gulp.parallel("Process-CSS", "Process-JS", "Library-JS"));
+const frontend = gulp.parallel(copyFiles, processCss, processJs, copyLib);
+const watch = gulp.parallel(watchSrc, watchCss, watchJs);
+const build = gulp.series(clean, frontend);
 
-gulp.task("setup", gulp.series("Setup-Local-IIS", "frontend"));
-
-gulp.task("watch", gulp.parallel("Watch-CSS", "Watch-JS"));
-
-gulp.task("default", gulp.series("frontend", "watch"));
+// Exports
+exports.frontend = frontend;
+exports.watch = watch;
+exports.build = build;
+exports.default = gulp.series(build, serveSite, watch);
