@@ -2,7 +2,8 @@ import gulp from "gulp";
 import del from "del";
 import babel from "gulp-babel";
 import uglify from "gulp-uglify-es";
-import * as log from "./scripts/Gulp/log";
+import chalk from "chalk";
+import stripColour from "strip-ansi";
 import postCss from "gulp-postcss";
 import postCssPreset from "postcss-preset-env";
 import purgeCss from "@fullhuman/postcss-purgecss";
@@ -12,7 +13,7 @@ import browserSync from "browser-sync";
 
 const server = browserSync.create();
 
-// Files
+// File locations
 const siteRoot = "./src";
 const distRoot = "./dist";
 
@@ -23,6 +24,15 @@ const srcFiles = [siteRoot + "/**/*.html", siteRoot + assetsRoot + "/images/**/*
 const srcStyles = siteRoot + assetsRoot + "/src/css/style.css";
 const srcScripts = siteRoot + assetsRoot + "/src/js/**/*.js";
 const cssOutputFiles = [siteRoot + "/**/*.html", srcScripts];
+
+// Helpers
+const logInfo = str => {
+    console.log(chalk.black.bgWhite(stripColour(str)));
+};
+
+const logError = err => {
+    console.error(chalk.white.bgRed(stripColour(err instanceof Error ? err.message : err)));
+};
 
 // Tasks
 const clean = done =>
@@ -45,7 +55,7 @@ const processJs = () => gulp
     .src(srcScripts)
     .pipe(babel({ presets: ["@babel/preset-env"] }))
     .pipe(gulp.dest(destScriptsFolder))
-    .pipe(uglify().on("error", e => { log.error(e); }))
+    .pipe(uglify().on("error", e => { logError(e); }))
     .pipe(gulp.dest(destScriptsFolder + "/min"));
 
 const copyLib = () => gulp
