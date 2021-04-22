@@ -1,14 +1,12 @@
 import gulp from "gulp";
 import del from "del";
 import babel from "gulp-babel";
-import uglify from "gulp-uglify-es";
-import chalk from "chalk";
-import stripColour from "strip-ansi";
+import { minify as terserMinify } from "terser"
+import jsCompressor from "gulp-terser";
 import postCss from "gulp-postcss";
-import postCssPreset from "postcss-preset-env";
-import purgeCss from "@fullhuman/postcss-purgecss";
+import autoprefixer from "autoprefixer";
 import tailwind from "tailwindcss";
-import cssNano from "cssnano";
+import csso from "postcss-csso"
 import browserSync from "browser-sync";
 
 const server = browserSync.create();
@@ -21,18 +19,9 @@ const assetsRoot = "/assets";
 const destStylesFolder = distRoot + assetsRoot + "/css";
 const destScriptsFolder = distRoot + assetsRoot + "/js";
 const srcFiles = [siteRoot + "/**/*.html", siteRoot + assetsRoot + "/images/**/*.*"];
-const srcStyles = siteRoot + assetsRoot + "/src/css/style.css";
-const srcScripts = siteRoot + assetsRoot + "/src/js/**/*.js";
+const srcStyles = siteRoot + assetsRoot + "/css/style.css";
+const srcScripts = siteRoot + assetsRoot + "/js/**/*.js";
 const cssOutputFiles = [siteRoot + "/**/*.html", srcScripts];
-
-// Helpers
-const logInfo = str => {
-    console.log(chalk.black.bgWhite(stripColour(str)));
-};
-
-const logError = err => {
-    console.error(chalk.white.bgRed(stripColour(err instanceof Error ? err.message : err)));
-};
 
 // Tasks
 const clean = done =>
@@ -42,20 +31,22 @@ const copyFiles = () => gulp
     .src(srcFiles, { base: siteRoot })
     .pipe(gulp.dest(distRoot));
 
-const processCss = () => gulp
-    .src(srcStyles)
-    .pipe(postCss([tailwind,
-        postCssPreset]))
-    .pipe(gulp.dest(destStylesFolder))
-    .pipe(postCss([purgeCss({ content: cssOutputFiles, defaultExtractor: content => content.match(/[\w-/:]+(?<!:)/g) || [] }),
-        cssNano]))
-    .pipe(gulp.dest(destStylesFolder + "/min"));
+const processCss = inProd => {
+    let task = () => gulp
+        .src(srcStyles)
+        .pipe(postCss([tailwind({ purge: { enabled: inProd, content: cssOutputFiles } }), autoprefixer]))
+        .pipe(gulp.dest(destStylesFolder))
+        .pipe(postCss([csso]))
+        .pipe(gulp.dest(destStylesFolder + "/min"));
+    Object.assign(task, { displayName: "processCss" });
+    return task;
+};
 
 const processJs = () => gulp
     .src(srcScripts)
     .pipe(babel({ presets: ["@babel/preset-env"] }))
     .pipe(gulp.dest(destScriptsFolder))
-    .pipe(uglify().on("error", e => { logError(e); }))
+    .pipe(jsCompressor({}, terserMinify))
     .pipe(gulp.dest(destScriptsFolder + "/min"));
 
 const copyLib = () => gulp
@@ -82,12 +73,13 @@ const watchCss = () => gulp.watch([srcStyles].concat(cssOutputFiles), { verbose:
 const watchJs = () => gulp.watch(srcScripts, { verbose: true }, gulp.series(processJs, reloadServer));
 
 // Sequences
-const frontend = gulp.parallel(copyFiles, processCss, processJs, copyLib);
+const frontend = inProd => gulp.parallel(copyFiles, processCss(inProd), processJs, copyLib);
 const watch = gulp.parallel(watchSrc, watchCss, watchJs);
-const build = gulp.series(clean, frontend);
+const buildDev = gulp.series(clean, frontend(false));
+const buildProd = gulp.series(frontend(true));
 
 // Exports
-exports.frontend = frontend;
+exports.frontend = frontend(false);
 exports.watch = watch;
-exports.build = build;
-exports.default = gulp.series(build, serveSite, watch);
+exports.build = buildProd;
+exports.default = gulp.series(buildDev, serveSite, watch);
