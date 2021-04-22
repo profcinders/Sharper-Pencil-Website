@@ -50,7 +50,7 @@ const processJs = () => gulp
     .pipe(gulp.dest(destScriptsFolder + "/min"));
 
 const copyLib = () => gulp
-    .src(["node_modules/vue/dist/vue.min.js", "node_modules/chart.js/dist/Chart.min.js"])
+    .src(["node_modules/vue/dist/vue.min.js", "node_modules/chart.js/dist/chart.min.js"])
     .pipe(gulp.dest(destScriptsFolder + "/lib"));
 
 const serveSite = done => {

@@ -6,33 +6,34 @@ let diceApp = new Vue({
             type: "bar",
             data: {
                 datasets: [{
-                    backgroundColor: "#805ad5",
-                    barPercentage: 1,
+                    backgroundColor: "rgba(124, 58, 237, 1)",
                     categoryPercentage: 1,
                     data: Array(6).fill((1 / 6) * 100)
                 }],
                 labels: ["1", "2", "3", "4", "5", "6"]
             },
             options: {
-                legend: {
-                    display: false
-                },
                 scales: {
-                    yAxes: [{
+                    y: {
+                        beginAtZero: true,
                         ticks: {
-                            beginAtZero: true,
                             callback: function (value) {
                                 return Math.round((value + Number.EPSILON) * 100) / 100 + '%';
                             },
                         }
-                    }]
+                    }
                 },
-                tooltips: {
-                    callbacks: {
-                        label(tooltipItem, data) {
-                            let label = data.datasets[tooltipItem.datasetIndex].label || "";
-                            label += (label ? ": " : "") + (Math.round((tooltipItem.yLabel + Number.EPSILON) * 100) / 100) + "%";
-                            return label;
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.label || "";
+                                label += (label ? ": " : "") + (Math.round((context.raw + Number.EPSILON) * 100) / 100) + "%";
+                                return label;
+                            }
                         }
                     }
                 }
