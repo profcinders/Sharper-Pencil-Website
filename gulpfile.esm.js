@@ -56,7 +56,10 @@ const copyLib = () => gulp
 const serveSite = done => {
     server.init({
         server: {
-            baseDir: distRoot
+            baseDir: distRoot,
+            serveStaticOptions: {
+                extensions: ["html"]
+            }
         }
     });
     done();
