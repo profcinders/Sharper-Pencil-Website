@@ -1,13 +1,11 @@
 import gulp from "gulp";
-import del from "del";
-import babel from "gulp-babel";
-import { minify as terserMinify } from "terser"
-import jsCompressor from "gulp-terser";
+import { deleteAsync as del } from "del";
 import postCss from "gulp-postcss";
 import autoprefixer from "autoprefixer";
 import tailwind from "tailwindcss";
 import csso from "postcss-csso"
 import browserSync from "browser-sync";
+import esBuild from "gulp-esbuild";
 
 const server = browserSync.create();
 
@@ -24,8 +22,8 @@ const srcScripts = siteRoot + assetsRoot + "/js/**/*.js";
 const cssOutputFiles = [siteRoot + "/**/*.html", srcScripts];
 
 // Tasks
-const clean = done =>
-    del([distRoot], done);
+const clean = () =>
+    del([distRoot]);
 
 const copyFiles = () => gulp
     .src(srcFiles, { base: siteRoot })
@@ -42,15 +40,17 @@ const processCss = inProd => {
     return task;
 };
 
-const processJs = () => gulp
-    .src(srcScripts)
-    .pipe(babel({ presets: ["@babel/preset-env"] }))
-    .pipe(gulp.dest(destScriptsFolder))
-    .pipe(jsCompressor({}, terserMinify))
-    .pipe(gulp.dest(destScriptsFolder + "/min"));
+const processJs = inProd => {
+    let task = () => gulp
+        .src(srcScripts)
+        .pipe(esBuild({ bundle: true, target: "es6", minify: inProd, treeShaking: inProd }))
+        .pipe(gulp.dest(destScriptsFolder));
+    Object.assign(task, { displayName: "processJs" });
+    return task;
+}
 
 const copyLib = () => gulp
-    .src(["node_modules/vue/dist/vue.min.js", "node_modules/chart.js/dist/chart.min.js"])
+    .src(["node_modules/vue/dist/vue.min.js"])
     .pipe(gulp.dest(destScriptsFolder + "/lib"));
 
 const serveSite = done => {
@@ -72,17 +72,15 @@ const reloadServer = done => {
 
 // Watchers
 const watchSrc = () => gulp.watch(srcFiles, { verbose: true }, gulp.series(copyFiles, reloadServer));
-const watchCss = () => gulp.watch([srcStyles].concat(cssOutputFiles), { verbose: true }, gulp.series(processCss, reloadServer));
-const watchJs = () => gulp.watch(srcScripts, { verbose: true }, gulp.series(processJs, reloadServer));
+const watchCss = () => gulp.watch([srcStyles].concat(cssOutputFiles), { verbose: true }, gulp.series(processCss(false), reloadServer));
+const watchJs = () => gulp.watch(srcScripts, { verbose: true }, gulp.series(processJs(false), reloadServer));
 
 // Sequences
-const frontend = inProd => gulp.parallel(copyFiles, processCss(inProd), processJs, copyLib);
+const frontend = inProd => gulp.parallel(copyFiles, processCss(inProd), processJs(inProd), copyLib);
 const watch = gulp.parallel(watchSrc, watchCss, watchJs);
 const buildDev = gulp.series(clean, frontend(false));
 const buildProd = gulp.series(frontend(true));
 
 // Exports
-exports.frontend = frontend(false);
-exports.watch = watch;
-exports.build = buildProd;
-exports.default = gulp.series(buildDev, serveSite, watch);
+export { watch, buildProd as build, clean };
+export default gulp.series(buildDev, serveSite, watch);

@@ -1,3 +1,6 @@
+import { Chart, BarController, BarElement, CategoryScale, LinearScale, Tooltip } from "chart.js"
+Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip);
+
 let diceApp = new Vue({
     el: "#diceApp",
     mounted() {
@@ -24,9 +27,6 @@ let diceApp = new Vue({
                     }
                 },
                 plugins: {
-                    legend: {
-                        display: false
-                    },
                     tooltip: {
                         callbacks: {
                             label: function(context) {
