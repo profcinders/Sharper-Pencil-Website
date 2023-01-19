@@ -19,6 +19,7 @@ const destScriptsFolder = distRoot + assetsRoot + "/js";
 const srcFiles = [siteRoot + "/**/*.html", siteRoot + assetsRoot + "/images/**/*.*"];
 const srcStyles = siteRoot + assetsRoot + "/css/style.css";
 const srcScripts = siteRoot + assetsRoot + "/js/**/*.js";
+const srcScriptEntryPoints = siteRoot + assetsRoot + "/js/*.js";
 const cssOutputFiles = [siteRoot + "/**/*.html", srcScripts];
 
 // Tasks
@@ -42,16 +43,19 @@ const processCss = inProd => {
 
 const processJs = inProd => {
     let task = () => gulp
-        .src(srcScripts)
-        .pipe(esBuild({ bundle: true, target: "es6", minify: inProd, treeShaking: inProd }))
+        .src(srcScriptEntryPoints)
+        .pipe(esBuild(
+            {
+                bundle: true,
+                define: { "__VUE_OPTIONS_API__": "true", "__VUE_PROD_DEVTOOLS__": "false" },
+                alias: { "vue": "vue/dist/vue.esm-bundler.js" },
+                minify: inProd,
+                treeShaking: inProd
+            }))
         .pipe(gulp.dest(destScriptsFolder));
     Object.assign(task, { displayName: "processJs" });
     return task;
 }
-
-const copyLib = () => gulp
-    .src(["node_modules/vue/dist/vue.min.js"])
-    .pipe(gulp.dest(destScriptsFolder + "/lib"));
 
 const serveSite = done => {
     server.init({
@@ -76,7 +80,7 @@ const watchCss = () => gulp.watch([srcStyles].concat(cssOutputFiles), { verbose:
 const watchJs = () => gulp.watch(srcScripts, { verbose: true }, gulp.series(processJs(false), reloadServer));
 
 // Sequences
-const frontend = inProd => gulp.parallel(copyFiles, processCss(inProd), processJs(inProd), copyLib);
+const frontend = inProd => gulp.parallel(copyFiles, processCss(inProd), processJs(inProd));
 const watch = gulp.parallel(watchSrc, watchCss, watchJs);
 const buildDev = gulp.series(clean, frontend(false));
 const buildProd = gulp.series(frontend(true));

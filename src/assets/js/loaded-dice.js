@@ -1,86 +1,54 @@
-import { Chart, BarController, BarElement, CategoryScale, LinearScale, Tooltip } from "chart.js"
-Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip);
+import { createApp } from "vue";
+import OddsChart from "./loaded-dice-app/OddsChart"
 
-let diceApp = new Vue({
-    el: "#diceApp",
-    mounted() {
-        let chartEl = document.getElementById('oddsChart');
-        this.options.oddsChart = new Chart(chartEl, {
-            type: "bar",
-            data: {
-                datasets: [{
-                    backgroundColor: "rgba(124, 58, 237, 1)",
-                    categoryPercentage: 1,
-                    data: Array(6).fill((1 / 6) * 100)
-                }],
-                labels: ["1", "2", "3", "4", "5", "6"]
+let oddsChart = null;
+
+createApp({
+    data() {
+        return {
+            dice: {
+                diceMultiplier: 1,
+                dieSides: 6,
+                constantAdditive: 0,
+                additiveSign: "+",
+                additive: 0,
+                hasRolled: false,
+                rollResult: 0,
+                rollDetails: "",
+                weighted: false,
+                rollWeights: Array(100).fill(1),
+                lastRollWeighted: false
             },
             options: {
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: function (value) {
-                                return Math.round((value + Number.EPSILON) * 100) / 100 + '%';
-                            },
-                        }
-                    }
-                },
-                plugins: {
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                let label = context.label || "";
-                                label += (label ? ": " : "") + (Math.round((context.raw + Number.EPSILON) * 100) / 100) + "%";
-                                return label;
-                            }
-                        }
-                    }
-                }
+                toggleCaret: "&#x2bc6;",
+                show: false
             }
-        });
-    },
-    data: {
-        dice: {
-            diceMultiplier: 1,
-            dieSides: 6,
-            constantAdditive: 0,
-            additiveSign: "+",
-            additive: 0,
-            hasRolled: false,
-            rollResult: 0,
-            rollDetails: "",
-            weighted: false,
-            rollWeights: Array(100).fill(1),
-            lastRollWeighted: false
-        },
-        options: {
-            toggleCaret: "&#x2bc6;",
-            show: false,
-            oddsChart: null
-        }
+        };
     },
     computed: {
         activeRollWeights() {
-            return this.dice.rollWeights.slice(0, this.dice.dieSides);
+            return this.dice.rollWeights.slice(0, this.dice.dieSides ?? 0);
         },
         totalWeight() {
             return this.sumArray(this.activeRollWeights);
         }
     },
     watch: {
-        "dice.constantAdditive": function () {
+        "dice.constantAdditive"() {
             this.calculateAdditive();
         },
-        "dice.additiveSign": function () {
+        "dice.additiveSign"() {
             this.calculateAdditive();
         },
-        "dice.weighted": function () {
+        "dice.weighted"() {
             this.updateOddsChart();
         },
-        "activeRollWeights": function () {
+        activeRollWeights() {
             this.updateOddsChart();
         }
+    },
+    mounted() {
+        oddsChart = new OddsChart(document.getElementById('oddsChart'), 6);
     },
     methods: {
         rollDice() {
@@ -122,7 +90,7 @@ let diceApp = new Vue({
             rolls = rolls.map(r =>
                 r == 1 ? `<span class="font-bold text-red-600">${r}</span>`
                     : r == this.dice.dieSides ? `<span class="font-bold text-green-700">${r}</span>`
-                    : r);
+                        : r);
             this.dice.rollDetails = `(${rolls.join(" + ")}) ${this.dice.additiveSign} ${this.dice.constantAdditive}`;
 
             this.dice.hasRolled = true;
@@ -141,27 +109,22 @@ let diceApp = new Vue({
         },
         updateOddsChart() {
             let newData = [];
-            let newLabels = Array.from({ length: this.dice.dieSides }, (v, i) => i + 1);
-
             if (this.dice.weighted) {
                 const divisor = this.totalWeight;
                 for (let w of this.activeRollWeights) {
                     newData.push((w / divisor) * 100);
                 }
             } else {
-                for (let i = 0; i < newLabels.length; i++) {
-                    newData.push((1 / newLabels.length) * 100);
+                let flooredSides = Math.trunc(this.dice.dieSides);
+                for (let i = 0; i < flooredSides; i++) {
+                    newData.push((1 / flooredSides) * 100);
                 }
             }
 
-            this.options.oddsChart.data.labels = newLabels;
-            this.options.oddsChart.data.datasets.forEach((dataset) => {
-                dataset.data = newData;
-            });
-            this.options.oddsChart.update();
+            oddsChart.refreshWith(newData);
         },
         resetWeights() {
-            this.dice.rollWeights = Array(100).fill(1);
+            this.dice.rollWeights = Array(Math.max(100, this.dice.dieSides ?? 0)).fill(1);
         },
         getRandomInt(min, max) {
             return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -170,4 +133,4 @@ let diceApp = new Vue({
             return arr.reduce((x, y) => parseInt(x) + parseInt(y), 0);
         }
     }
-});
+}).mount("#diceApp");

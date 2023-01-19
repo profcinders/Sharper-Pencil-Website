@@ -74,10 +74,9 @@
                     type="number" step="1" min="0" placeholder="c" v-model="dice.constantAdditive">
             </div>
             <div class="flex flex-col">
-                <button class="text-purple-600 underline mb-3" v-on:click="toggleOptions">Options <span
-                        v-html="options.toggleCaret">&#x2bc6;</span></button>
+                <button class="text-purple-600 underline mb-3" @click.prevent="toggleOptions">Options <span v-html="options.toggleCaret"></span></button>
 
-                <div class="overflow-hidden" v-bind:class="{ 'h-0': !options.show }">
+                <div class="overflow-hidden" :class="options.show ? null : 'h-0'">
                     <div class="flex items-center justify-center mb-3">
                         <input type="checkbox" id="dice.weighted" class="mr-3" v-model="dice.weighted">
                         <label for="dice.weighted">Weighted</label>
@@ -85,10 +84,10 @@
                     <div class="w-1/2 lg:w-1/3 mx-auto mb-3">
                         <canvas id="oddsChart" width="400" height="300"></canvas>
                     </div>
-                    <div class="flex justify-center overflow-hidden mb-3" v-bind:class="{ 'h-0': !dice.weighted }">
-                        <button class="px-5 py-1 rounded-full bg-gray-300 border border-gray-400" v-on:click="resetWeights">Reset all weights</button>
+                    <div class="flex justify-center overflow-hidden mb-3" :class="dice.weighted ? null : 'h-0'">
+                        <button class="px-5 py-1 rounded-full bg-gray-300 border border-gray-400" @click.prevent="resetWeights">Reset all weights</button>
                     </div>
-                    <div class="flex flex-wrap justify-center overflow-hidden mb-3" v-bind:class="{ 'h-0': !dice.weighted }">
+                    <div class="flex flex-wrap justify-center overflow-hidden mb-3" :class="dice.weighted ? null : 'h-0'">
                         <div v-for="index in parseInt(dice.dieSides)" class="m-3">
                             <label>{{ index }}:</label>
                             <input
@@ -99,7 +98,7 @@
                 </div>
             </div>
             <div class="flex items-baseline justify-center mb-3">
-                <button class="px-5 py-1 rounded-full bg-purple-600 text-white" v-on:click="rollDice">Roll</button>
+                <button class="px-5 py-1 rounded-full bg-purple-600 text-white" @click.prevent="rollDice">Roll</button>
             </div>
             <p class="text-center" v-if="!dice.hasRolled">Roll the dice!</p>
             <div v-else>
@@ -113,8 +112,6 @@
         </section>
     </main>
 
-    <script src="/assets/js/lib/vue.min.js"></script>
-    <!-- <script src="/assets/js/lib/Chart.min.js"></script> -->
     <script src="/assets/js/loaded-dice.js"></script>
 </body>
 
