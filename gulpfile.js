@@ -4,9 +4,9 @@ import postCss from "gulp-postcss";
 import autoprefixer from "autoprefixer";
 import tailwind from "tailwindcss";
 import csso from "postcss-csso"
-import browserSync from "browser-sync";
 import esBuild from "gulp-esbuild";
 import esbVue from "esbuild-plugin-vue3";
+import browserSync from "browser-sync";
 
 const server = browserSync.create();
 

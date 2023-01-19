@@ -14,7 +14,7 @@ export default class OddsChart {
             type: "bar",
             data: {
                 datasets: [{
-                    backgroundColor: "rgba(124, 58, 237, 1)",
+                    backgroundColor: "rgba(147, 51, 234, 1)",
                     categoryPercentage: 1,
                     data: Array(diceCount).fill((1 / diceCount) * 100)
                 }],
