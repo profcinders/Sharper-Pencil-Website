@@ -6,6 +6,7 @@ import tailwind from "tailwindcss";
 import csso from "postcss-csso"
 import browserSync from "browser-sync";
 import esBuild from "gulp-esbuild";
+import esbVue from "esbuild-plugin-vue3";
 
 const server = browserSync.create();
 
@@ -17,9 +18,10 @@ const assetsRoot = "/assets";
 const destStylesFolder = distRoot + assetsRoot + "/css";
 const destScriptsFolder = distRoot + assetsRoot + "/js";
 const srcFiles = [siteRoot + "/**/*.html", siteRoot + assetsRoot + "/images/**/*.*"];
-const srcStyles = siteRoot + assetsRoot + "/css/style.css";
-const srcScripts = siteRoot + assetsRoot + "/js/**/*.js";
-const srcScriptEntryPoints = siteRoot + assetsRoot + "/js/*.js";
+const srcStyles = siteRoot + assetsRoot + "/css/**/*.*";
+const srcScripts = siteRoot + assetsRoot + "/js/**/*.*";
+const styleEntryPoints = siteRoot + assetsRoot + "/css/style.css";
+const scriptEntryPoints = siteRoot + assetsRoot + "/js/*.js";
 const cssOutputFiles = [siteRoot + "/**/*.html", srcScripts];
 
 // Tasks
@@ -32,7 +34,7 @@ const copyFiles = () => gulp
 
 const processCss = inProd => {
     let task = () => gulp
-        .src(srcStyles)
+        .src(styleEntryPoints)
         .pipe(postCss([tailwind({ purge: { enabled: inProd, content: cssOutputFiles } }), autoprefixer]))
         .pipe(gulp.dest(destStylesFolder))
         .pipe(postCss([csso]))
@@ -43,14 +45,13 @@ const processCss = inProd => {
 
 const processJs = inProd => {
     let task = () => gulp
-        .src(srcScriptEntryPoints)
+        .src(scriptEntryPoints)
         .pipe(esBuild(
             {
                 bundle: true,
-                define: { "__VUE_OPTIONS_API__": "true", "__VUE_PROD_DEVTOOLS__": "false" },
-                alias: { "vue": "vue/dist/vue.esm-bundler.js" },
                 minify: inProd,
-                treeShaking: inProd
+                treeShaking: inProd,
+                plugins: [ esbVue() ]
             }))
         .pipe(gulp.dest(destScriptsFolder));
     Object.assign(task, { displayName: "processJs" });
