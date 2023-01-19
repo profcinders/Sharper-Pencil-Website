@@ -1,12 +1,11 @@
 import gulp from "gulp";
-import del from "del";
-import babel from "gulp-babel";
-import { minify as terserMinify } from "terser"
-import jsCompressor from "gulp-terser";
+import { deleteAsync as del } from "del";
 import postCss from "gulp-postcss";
 import autoprefixer from "autoprefixer";
 import tailwind from "tailwindcss";
 import csso from "postcss-csso"
+import esBuild from "gulp-esbuild";
+import esbVue from "esbuild-plugin-vue3";
 import browserSync from "browser-sync";
 
 const server = browserSync.create();
@@ -19,13 +18,15 @@ const assetsRoot = "/assets";
 const destStylesFolder = distRoot + assetsRoot + "/css";
 const destScriptsFolder = distRoot + assetsRoot + "/js";
 const srcFiles = [siteRoot + "/**/*.html", siteRoot + assetsRoot + "/images/**/*.*"];
-const srcStyles = siteRoot + assetsRoot + "/css/style.css";
-const srcScripts = siteRoot + assetsRoot + "/js/**/*.js";
+const srcStyles = siteRoot + assetsRoot + "/css/**/*.*";
+const srcScripts = siteRoot + assetsRoot + "/js/**/*.*";
+const styleEntryPoints = siteRoot + assetsRoot + "/css/style.css";
+const scriptEntryPoints = siteRoot + assetsRoot + "/js/*.js";
 const cssOutputFiles = [siteRoot + "/**/*.html", srcScripts];
 
 // Tasks
-const clean = done =>
-    del([distRoot], done);
+const clean = () =>
+    del([distRoot]);
 
 const copyFiles = () => gulp
     .src(srcFiles, { base: siteRoot })
@@ -33,7 +34,7 @@ const copyFiles = () => gulp
 
 const processCss = inProd => {
     let task = () => gulp
-        .src(srcStyles)
+        .src(styleEntryPoints)
         .pipe(postCss([tailwind({ purge: { enabled: inProd, content: cssOutputFiles } }), autoprefixer]))
         .pipe(gulp.dest(destStylesFolder))
         .pipe(postCss([csso]))
@@ -42,16 +43,20 @@ const processCss = inProd => {
     return task;
 };
 
-const processJs = () => gulp
-    .src(srcScripts)
-    .pipe(babel({ presets: ["@babel/preset-env"] }))
-    .pipe(gulp.dest(destScriptsFolder))
-    .pipe(jsCompressor({}, terserMinify))
-    .pipe(gulp.dest(destScriptsFolder + "/min"));
-
-const copyLib = () => gulp
-    .src(["node_modules/vue/dist/vue.min.js", "node_modules/chart.js/dist/chart.min.js"])
-    .pipe(gulp.dest(destScriptsFolder + "/lib"));
+const processJs = inProd => {
+    let task = () => gulp
+        .src(scriptEntryPoints)
+        .pipe(esBuild(
+            {
+                bundle: true,
+                minify: inProd,
+                treeShaking: inProd,
+                plugins: [ esbVue() ]
+            }))
+        .pipe(gulp.dest(destScriptsFolder));
+    Object.assign(task, { displayName: "processJs" });
+    return task;
+}
 
 const serveSite = done => {
     server.init({
@@ -72,17 +77,15 @@ const reloadServer = done => {
 
 // Watchers
 const watchSrc = () => gulp.watch(srcFiles, { verbose: true }, gulp.series(copyFiles, reloadServer));
-const watchCss = () => gulp.watch([srcStyles].concat(cssOutputFiles), { verbose: true }, gulp.series(processCss, reloadServer));
-const watchJs = () => gulp.watch(srcScripts, { verbose: true }, gulp.series(processJs, reloadServer));
+const watchCss = () => gulp.watch([srcStyles].concat(cssOutputFiles), { verbose: true }, gulp.series(processCss(false), reloadServer));
+const watchJs = () => gulp.watch(srcScripts, { verbose: true }, gulp.series(processJs(false), reloadServer));
 
 // Sequences
-const frontend = inProd => gulp.parallel(copyFiles, processCss(inProd), processJs, copyLib);
+const frontend = inProd => gulp.parallel(copyFiles, processCss(inProd), processJs(inProd));
 const watch = gulp.parallel(watchSrc, watchCss, watchJs);
 const buildDev = gulp.series(clean, frontend(false));
 const buildProd = gulp.series(frontend(true));
 
 // Exports
-exports.frontend = frontend(false);
-exports.watch = watch;
-exports.build = buildProd;
-exports.default = gulp.series(buildDev, serveSite, watch);
+export { watch, buildProd as build, clean };
+export default gulp.series(buildDev, serveSite, watch);
