@@ -1,110 +1,77 @@
-<!DOCTYPE html>
-<html lang="en">
+{{#> layout}}
+    {{#*inline "title"}}Sharper Pencil{{/inline}}
+    {{#*inline "content"}}
 
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+        <main role="main" class="px-6 py-12">
+            <section class="container mx-auto">
+                <h1 class="text-5xl font-semibold">Sharper Pencil</h1>
+                <p class="mt-2 text-3xl text-purple-600">phantasia rationem creat</p>
 
-    <title>Sharper Pencil</title>
+                <hr class="my-6" />
 
-    <link href="/assets/css/min/style.css" rel="stylesheet">
-</head>
+                <p class="my-4"> Welcome to my site! My name's Rachel Drake, and I'm a Leeds-based Umbraco certified developer, who also
+                    happens to draw occasionally. </p>
+                <p class="my-4"> While I'm working on fleshing this site out a bit more, below are some blog posts I've written
+                    previously for you to check out. You can also try some prototype work I've done from the nav at the top of the page.
+                </p>
+                <ul class="list-disc ml-5 my-4">
+                    <li>
+                        <a href="https://codeshare.co.uk/blog/how-to-include-scripts-from-partial-views-in-mvc-and-umbraco/"
+                            target="_blank" class="text-purple-600 hover:underline">
+                            Include Scripts from Partial Views (Codeshare, 2019)
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.enjoy-digital.co.uk/news/the-fundamentals-of-development-whats-a-nuget-package/"
+                            target="_blank" class="text-purple-600 hover:underline">
+                            Creating Nuget Packages (Enjoy Digital, 2018)
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.enjoy-digital.co.uk/news/how-to-make-your-website-accessible/" target="_blank"
+                            class="text-purple-600 hover:underline">
+                            Web Accessibility Basics (Enjoy Digital, 2017)
+                        </a>
+                    </li>
+                </ul>
 
-<body>
-    <nav class="bg-purple-600 px-6 text-white" role="navigation" aria-label="main navigation">
-        <div class="flex items-stretch container mx-auto">
-            <div class="flex items-stretch hover:text-purple-200">
-                <a href="/" class="flex items-center text-2xl pr-6 py-2">Sharper Pencil</a>
-            </div>
-            <div class="hoverable flex items-stretch px-3 py-2 hover:text-purple-200 cursor-pointer">
-                <div class="flex items-center">Prototypes</div>
-                <div
-                    class="hover-activated absolute bg-white text-purple-900 border border-purple-300 shadow-md whitespace-nowrap">
-                    <a href="/prototype/loaded-dice"
-                        class="flex items-center pl-4 pr-5 py-2 hover:bg-purple-200">Loaded Dice</a>
-                </div>
-            </div>
-        </div>
-    </nav>
-    <svg class="w-full h-10 text-purple-600 z-10 -mt-6">
-        <use xlink:href="/assets/images/navbar-underline.min.svg#SharperNavUnderline"></use>
-    </svg>
+                <hr class="my-6" />
+            </section>
+            <section class="container mx-auto">
+                <p class="my-4">If you want to get an idea of what I've worked on previously, here's some examples:</p>
 
-    <main role="main" class="px-6 py-12">
-        <section class="container mx-auto">
-            <h1 class="text-5xl font-semibold">Sharper Pencil</h1>
-            <p class="mt-2 text-3xl text-purple-600">phantasia rationem creat</p>
-
-            <hr class="my-6" />
-
-            <p class="my-4">
-                Welcome to my site! My name's Rachel Drake, and I'm a Leeds-based Sitecore and Umbraco
-                certified developer, who also happens to draw occasionally. I'm working on a more
-                fully-featured blog at the moment, so stay tuned!
-            </p>
-            <p class="my-4">
-                In the meantime, I've written some blog posts for a previous employer, if you want to check
-                them out:
-            </p>
-            <ul class="list-disc ml-5 my-4">
-                <li>
-                    <a href="https://www.enjoy-digital.co.uk/news/how-to-make-your-website-accessible/" target="_blank"
-                        class="text-purple-600 hover:underline">
-                        Web Accessibility Basics
-                    </a>
-                </li>
-                <li>
-                    <a href="https://www.enjoy-digital.co.uk/news/the-fundamentals-of-development-whats-a-nuget-package/"
-                        target="_blank" class="text-purple-600 hover:underline">
-                        Creating Nuget Packages
-                    </a>
-                </li>
-            </ul>
-
-            <hr class="my-6" />
-        </section>
-        <section class="container mx-auto">
-            <p class="my-4">If you want to get an idea of what I've worked on previously, here's some examples:</p>
-
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
-                <div class="border border-purple-300">
-                    <img src="/assets/images/sitecore-700.jpg" class="w-full">
-                    <div class="p-6">
-                        <p class="text-3xl pb-3">Sitecore CMS</p>
-                        <p>
-                            I've worked on a wide variety of Sitecore projects, including both customer- and
-                            business-facing websites. One example is a major UK supermarket, for which I helped make a
-                            retailer-facing site allowing them to check their store's status, update stock orders and
-                            order sales materials. This involved integrating with various external APIs, as well as
-                            writing our own, in addition to the standard Sitecore build and WFFM integration.
-                        </p>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+                    <div class="border border-purple-300">
+                        <img src="/assets/images/umbraco-700.jpg" class="w-full">
+                        <div class="p-6">
+                            <p class="text-3xl pb-3">Umbraco CMS</p>
+                            <p> From static forms to Umbraco Forms, and from Examine to Elasticsearch: I've done a lot of varied and intricate work
+                                with Umbraco. I've recently helped out on a project for a paint manufacturer, where I completed an "Inspiration"
+                                section listing decorating ideas and themes. This required the use of Umbraco's built-in indexing solution, as well
+                                as some custom filtering code. The site also uses multiple plugins and APIs to provide the company's branded colours
+                                and products consistently and beautifully. </p>
+                        </div>
+                    </div>
+                    <div class="border border-purple-300">
+                        <img src="/assets/images/sitecore-700.jpg" class="w-full">
+                        <div class="p-6">
+                            <p class="text-3xl pb-3">Sitecore CMS</p>
+                            <p> I've worked on a wide variety of Sitecore projects, including both customer- and business-facing websites. One
+                                example is a major UK supermarket, for which I helped make a retailer-facing site allowing them to check their
+                                store's status, update stock orders and order sales materials. This involved integrating with various external APIs,
+                                as well as writing our own, in addition to the standard Sitecore build and WFFM integration. </p>
+                        </div>
                     </div>
                 </div>
-                <div class="border border-purple-300">
-                    <img src="/assets/images/umbraco-700.jpg" class="w-full">
-                    <div class="p-6">
-                        <p class="text-3xl pb-3">Umbraco CMS</p>
-                        <p>
-                            From static forms to Umbraco Forms, and from Examine to Elasticsearch: I've done a lot of
-                            varied and intricate work with Umbraco. I've recently helped out on a project for a paint
-                            manufacturer, where I completed an "Inspiration" section listing decorating ideas and
-                            themes. This required the use of Umbraco's built-in indexing solution, as well as some
-                            custom filtering code. The site also uses multiple plugins and APIs to provide the company's
-                            branded colours and products consistently and beautifully.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <section class="container mx-auto">
-            <p class="my-4">
-                If you're interested in hiring me for a contract role, please email me at
-                <a href="mailto:contact@sharper-pencil.co.uk"
-                    class="text-purple-600 hover:underline">contact@sharper-pencil.co.uk</a>
-                and I'll get back to you as soon as I can.
-            </p>
-        </section>
-    </main>
-</body>
+            </section>
+            <section class="container mx-auto">
+                <p class="my-4">If you're interested in hiring me for a contract role, please email me at
+                    <a href="mailto:contact@sharper-pencil.co.uk"
+                        class="text-purple-600 hover:underline">contact@sharper-pencil.co.uk</a>
+                    and I'll get back to you as soon as I can.
+                </p>
+            </section>
+        </main>
 
-</html>
+    {{/inline}}
+{{/layout}}

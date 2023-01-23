@@ -1,56 +1,29 @@
-<!DOCTYPE html>
-<html lang="en">
+{{#> layout}}
+    {{#*inline "title"}}Loaded Dice Prototype | Sharper Pencil{{/inline}}
+    {{#*inline "content"}}
 
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+        <main role="main" class="px-6 py-12">
+            <section class="container mx-auto">
+                <h1 class="text-5xl font-semibold">Loaded Dice - Prototype</h1>
 
-    <title>Loaded Dice Prototype | Sharper Pencil</title>
+                <hr class="my-6" />
 
-    <link href="/assets/css/min/style.css" rel="stylesheet">
-</head>
+                <p class="my-4"> This is an experiment to see how randomised dice can be loaded to favour particular rolls, inspired by
+                    a particularly bad run of luck in a tabletop RPG game. You can check the source code on
+                    <a href="https://github.com/profcinders/Sharper-Pencil-Website/tree/master/src/assets/js"
+                        class="text-purple-600 hover:underline">GitHub</a>,
+                    and feel free to message me at
+                    <a href="mailto:contact@sharper-pencil.co.uk"
+                        class="text-purple-600 hover:underline">contact@sharper-pencil.co.uk</a>
+                    with your experience using this tool!
+                </p>
 
-<body>
-    <nav class="bg-purple-600 px-6 text-white" role="navigation" aria-label="main navigation">
-        <div class="flex items-stretch container mx-auto">
-            <div class="flex items-stretch hover:text-purple-200">
-                <a href="/" class="flex items-center text-2xl pr-6 py-2">Sharper Pencil</a>
-            </div>
-            <div class="hoverable flex items-stretch px-3 py-2 hover:text-purple-200 cursor-pointer">
-                <div class="flex items-center">Prototypes</div>
-                <div
-                    class="hover-activated absolute bg-white text-purple-900 border border-purple-300 shadow-md whitespace-nowrap">
-                    <a href="/prototype/loaded-dice"
-                        class="flex items-center pl-4 pr-5 py-2 hover:bg-purple-200">Loaded Dice</a>
-                </div>
-            </div>
-        </div>
-    </nav>
-    <svg class="w-full h-10 text-purple-600 z-10 -mt-6">
-        <use xlink:href="/assets/images/navbar-underline.min.svg#SharperNavUnderline"></use>
-    </svg>
+                <hr class="my-6" />
+            </section>
+            <section id="diceApp" class="container mx-auto flex flex-col"></section>
+        </main>
 
-    <main role="main" class="px-6 py-12">
-        <section class="container mx-auto">
-            <h1 class="text-5xl font-semibold">Loaded Dice - Prototype</h1>
+        <script src="/assets/js/loaded-dice.js"></script>
 
-            <hr class="my-6" />
-
-            <p class="my-4">
-                This is an experiment to see how randomised dice can be loaded to favour particular rolls.
-                This was inspired by a particularly bad run of luck in a tabletop RPG game.
-                Feel free to message me at
-                <a href="mailto:contact@sharper-pencil.co.uk"
-                    class="text-purple-600 hover:underline">contact@sharper-pencil.co.uk</a>
-                with your experience using this tool!
-            </p>
-
-            <hr class="my-6" />
-        </section>
-        <section id="diceApp" class="container mx-auto flex flex-col"></section>
-    </main>
-
-    <script src="/assets/js/loaded-dice.js"></script>
-</body>
-
-</html>
+    {{/inline}}
+{{/layout}}
