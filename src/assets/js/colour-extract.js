@@ -37,7 +37,7 @@ const processImage = () => {
         imgEl.src = event.target.result;
         imgEl.setAttribute("class", "w-full");
         imgParent.replaceChildren(imgEl);
-        extractColours();
+        extractColours(event.target.result);
         const section = imgParent.closest("section");
         section.classList.remove("hidden");
         section.classList.add("grid");
@@ -45,9 +45,8 @@ const processImage = () => {
     reader.readAsDataURL(input.files[0]);
 };
 
-const extractColours = async () => {
-    const imgEl = document.getElementById("input-image").querySelector("img");
-    const { colors: colours } = palette(await pixels(imgEl), 6);
+const extractColours = async (img) => {
+    const { colors: colours } = palette(await pixels(img), 6);
     for (const i in colours) {
         createSwatch(colours[i], findNearestTailwindColour(colours[i]));
     }
@@ -66,6 +65,12 @@ const createSwatch = (colour, text) => {
         let nameBlock = document.createElement("div");
         nameBlock.setAttribute("class", "bg-black/50 text-white text-center absolute bottom-0 w-full");
         nameBlock.innerText = text;
+
+        let sampleBlock = document.createElement("div");
+        sampleBlock.setAttribute("class", "w-3 aspect-square inline-block ml-1 border border-white/50");
+        sampleBlock.setAttribute("style", `background-color:${twColours[text]}`);
+        nameBlock.appendChild(sampleBlock);
+
         swatch.appendChild(nameBlock);
     }
 
