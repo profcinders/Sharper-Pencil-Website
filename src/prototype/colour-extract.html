@@ -1,0 +1,43 @@
+{{#> layout}}
+    {{#*inline "title"}}Colour Extraction Prototype | Sharper Pencil{{/inline}}
+    {{#*inline "content"}}
+
+        <main role="main" class="px-6 py-12">
+            <section class="container mx-auto">
+                <h1 class="text-5xl font-semibold">Colour Extraction - Prototype</h1>
+
+                <hr class="my-6" />
+
+                <p class="my-4">A few years ago I made a form in C# that allowed users to upload a picture, present its main colours,
+                    let them choose one of these, and match that colour to the client's range of paints. Here I'm doing some of the same
+                    things, but in JS - you can upload an image, and the code will pull the main colours out of it using the
+                    <a href="https://www.npmjs.com/package/image-palette" class="text-purple-600 hover:underline">image-palette</a>
+                    library. Just for fun I'm also matching those colours to their closest
+                    <a href="https://tailwindcss.com/" class="text-purple-600 hover:underline">Tailwind CSS</a>
+                    colours. You can check out the source code on
+                    <a href="https://github.com/profcinders/Sharper-Pencil-Website/blob/master/src/assets/js/colour-extract.js" class="text-purple-600 hover:underline">GitHub</a>.</p>
+
+                <hr class="my-6" />
+            </section>
+            <section class="container mx-auto text-center">
+                <form id="image-upload">
+                    <fieldset class="mb-4">
+                        <input type="file" accept="image/png,image/jpeg" class="text-sm text-slate-500 file:rounded-full file:px-5 file:py-1 file:border-0 file:mr-2 file:bg-purple-600 file:text-base file:text-white hover:file:bg-purple-500 hover:file:cursor-pointer">
+                    </fieldset>
+                    <button type="submit" class="rounded-full px-5 py-1 border-0 bg-purple-600 text-white hover:bg-purple-500 disabled:bg-gray-300 disabled:cursor-not-allowed" disabled>Go!</button>
+                </form>
+
+                <hr class="my-6" />
+            </section>
+            <section class="container mx-auto grid md:grid-cols-2 gap-4 hidden">
+                <div>
+                    <img id="input-image" src="/assets/images/umbraco-700.jpg" class="w-full">
+                </div>
+                <div id="palette" class="columns-[10rem_3]"></div>
+            </section>
+        </main>
+
+        <script src="/assets/js/colour-extract.js"></script>
+
+    {{/inline}}
+{{/layout}}
