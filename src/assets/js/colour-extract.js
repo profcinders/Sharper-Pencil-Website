@@ -32,16 +32,21 @@ const processImage = () => {
 
     let reader = new FileReader();
     reader.addEventListener("load", event => {
-        const imgEl = document.getElementById("input-image");
+        const imgParent = document.getElementById("input-image");
+        const imgEl = document.createElement("img");
         imgEl.src = event.target.result;
+        imgEl.setAttribute("class", "w-full");
+        imgParent.replaceChildren(imgEl);
         extractColours();
-        imgEl.closest("section").classList.remove("hidden");
+        const section = imgParent.closest("section");
+        section.classList.remove("hidden");
+        section.classList.add("grid");
     });
     reader.readAsDataURL(input.files[0]);
 };
 
 const extractColours = async () => {
-    const imgEl = document.getElementById("input-image");
+    const imgEl = document.getElementById("input-image").querySelector("img");
     const { colors: colours } = palette(await pixels(imgEl), 6);
     for (const i in colours) {
         createSwatch(colours[i], findNearestTailwindColour(colours[i]));
