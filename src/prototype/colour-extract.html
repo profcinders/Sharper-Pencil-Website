@@ -14,17 +14,32 @@
                     <a href="https://www.npmjs.com/package/image-palette" class="text-purple-600 hover:underline">image-palette</a>
                     library. Just for fun I'm also matching those colours to their closest
                     <a href="https://tailwindcss.com/" class="text-purple-600 hover:underline">Tailwind CSS</a>
-                    colours. You can check out the source code on
+                    or Final Fantasy XIV dye colours. You can check out the source code on
                     <a href="https://github.com/profcinders/Sharper-Pencil-Website/blob/master/src/assets/js/colour-extract.js" class="text-purple-600 hover:underline">GitHub</a>.</p>
 
                 <hr class="my-6" />
             </section>
-            <section class="container mx-auto text-center">
-                <form id="image-upload">
-                    <fieldset class="mb-4">
-                        <input type="file" accept="image/png,image/jpeg" class="text-sm text-slate-500 file:rounded-full file:px-5 file:py-1 file:border-0 file:mr-2 file:bg-purple-600 file:text-base file:text-white hover:file:bg-purple-500 hover:file:cursor-pointer">
-                    </fieldset>
-                    <button type="submit" class="rounded-full px-5 py-1 border-0 bg-purple-600 text-white hover:bg-purple-500 disabled:bg-gray-300 disabled:cursor-not-allowed" disabled>Go!</button>
+            <section class="container mx-auto">
+                <form id="image-upload" class="flex flex-col w-64 mx-auto text-center">
+                    <div class="mb-4">
+                        <label for="image-to-analyse" class="block mb-1">Image:</label>
+                        <input id="image-to-analyse" type="file" accept="image/png,image/jpeg" class="text-sm text-slate-500 file:rounded-full file:px-5 file:py-1 file:border-0 file:mr-2 file:bg-purple-600 file:text-base file:text-white hover:file:bg-purple-500 hover:file:cursor-pointer">
+                    </div>
+                    <div class="mb-4">
+                        <label for="colour-comparison" class="block mb-1">Colour Comparison:</label>
+                        <div class="relative">
+                            <select id="colour-comparison" class="appearance-none border border-gray-400 hover:border-gray-500 focus:border-gray-500 rounded py-1 pl-2 pr-8 w-full">
+                                <option value="twColours" selected>Tailwind CSS</option>
+                                <option value="ffxivColours">Final Fantasy XIV</option>
+                            </select>
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-1 text-purple-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" class="fill-current w-5 h-5">
+                                    <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="rounded-full w-16 mx-auto py-1 border-0 bg-purple-600 text-white hover:bg-purple-500 disabled:bg-gray-300 disabled:cursor-not-allowed" disabled>Go!</button>
                 </form>
 
                 <hr class="my-6" />

@@ -1,6 +1,7 @@
 import pixels from "image-pixels"
 import palette from "image-palette"
 import twColours from "./colour-extract-app/TailwindColours"
+import ffxivColours from "./colour-extract-app/FfxivDyeColours"
 
 const allowSubmission = () => {
     const form = document.getElementById("image-upload");
@@ -25,7 +26,7 @@ const resetPalette = () => {
 };
 
 const processImage = () => {
-    const input = document.getElementById("image-upload").querySelector("input");
+    const input = document.getElementById("image-to-analyse");
     if (!input.files || !input.files[0]) {
         return;
     }
@@ -46,18 +47,28 @@ const processImage = () => {
 };
 
 const extractColours = async (img) => {
+    let colourList = {};
+    switch (document.getElementById("colour-comparison").value) {
+        case "twColours":
+            colourList = twColours;
+            break;
+        case "ffxivColours":
+            colourList = ffxivColours;
+            break;
+    }
+
     const { colors: colours } = palette(await pixels(img), 6);
     for (const i in colours) {
-        createSwatch(colours[i], findNearestTailwindColour(colours[i]));
+        createSwatch(colours[i], findNearestTailwindColour(colours[i], colourList), colourList);
     }
 };
 
-const createSwatch = (colour, text) => {
+const createSwatch = (colour, text, colours) => {
     let swatch = document.createElement("div");
     swatch.setAttribute("class", "w-32 aspect-square rounded-lg overflow-hidden relative mb-4 mx-auto");
 
     let colBlock = document.createElement("div");
-    colBlock.setAttribute("class", "h-full w-full")
+    colBlock.setAttribute("class", "h-full w-full");
     colBlock.setAttribute("style", `background-color:rgb(${colour[0]},${colour[1]},${colour[2]})`);
     swatch.appendChild(colBlock);
 
@@ -68,7 +79,7 @@ const createSwatch = (colour, text) => {
 
         let sampleBlock = document.createElement("div");
         sampleBlock.setAttribute("class", "w-3 aspect-square inline-block ml-1 border border-white/50");
-        sampleBlock.setAttribute("style", `background-color:${twColours[text]}`);
+        sampleBlock.setAttribute("style", `background-color:${colours[text]}`);
         nameBlock.appendChild(sampleBlock);
 
         swatch.appendChild(nameBlock);
@@ -77,11 +88,11 @@ const createSwatch = (colour, text) => {
     document.getElementById("palette").appendChild(swatch);
 };
 
-const findNearestTailwindColour = rgb => {
+const findNearestTailwindColour = (rgb, colours) => {
     let nearest = Number.POSITIVE_INFINITY;
     let nearestName = "";
 
-    for (const [name, hex] of Object.entries(twColours)) {
+    for (const [name, hex] of Object.entries(colours)) {
         let distance = rgbDistance(rgb, hexToRgb(hex));
         if (distance < nearest) {
             nearest = distance;
